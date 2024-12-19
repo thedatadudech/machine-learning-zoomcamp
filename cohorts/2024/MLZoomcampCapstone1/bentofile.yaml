@@ -1,4 +1,3 @@
-
 service: "predict:svc"
 labels:
   owner: mlzoomcamp
@@ -12,4 +11,3 @@ python:
     - scikit-learn
     - bentoml
     - pydantic
-    - typing
