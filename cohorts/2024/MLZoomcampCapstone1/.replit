@@ -1,0 +1,93 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "ML Prediction Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Streamlit App"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Train Model"
+
+[[workflows.workflow]]
+name = "ML Prediction Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bentoml serve predict.py:svc --host 0.0.0.0 --port 3000"
+waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Streamlit App"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run app.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Train Model"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python train.py"
+
+[[workflows.workflow]]
+name = "Jupyter Notebook"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "jupyter notebook --ip=0.0.0.0 --port=8888 --allow-root --no-browser"
+waitForPort = 8888
+
+[deployment]
+run = ["sh", "-c", "bentoml serve predict.py:svc --host 0.0.0.0 --port 3000"]
+
+[[ports]]
+localPort = 3000
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8000
+
+[[ports]]
+localPort = 47155

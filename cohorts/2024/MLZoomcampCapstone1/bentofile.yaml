@@ -1,0 +1,15 @@
+
+service: "predict:svc"
+labels:
+  owner: mlzoomcamp
+  project: heart-disease
+include:
+  - "*.py"
+python:
+  packages:
+    - numpy
+    - pandas
+    - scikit-learn
+    - bentoml
+    - pydantic
+    - typing
